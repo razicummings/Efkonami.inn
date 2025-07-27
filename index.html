@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Razzy eFootball Tournament</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
+    body, html { height: 100%; background: linear-gradient(135deg, #2c003e, #4a00e0); overflow: hidden; color: white; }
+    .screen { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; justify-content: center; align-items: center; flex-direction: column; padding: 20px; text-align: center; }
+    .active { display: flex; animation: fadeIn 0.8s ease; }
+    img.logo { max-width: 180px; margin-bottom: 20px; }
+
+    button {
+      padding: 12px 20px;
+      background-color: gold;
+      color: black;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 12px gold, 0 0 20px gold;
+      transition: all 0.3s ease-in-out;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 16px gold, 0 0 30px gold;
+    }
+
+    input {
+      padding: 10px;
+      margin: 10px 0;
+      width: 90%;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .box, .tournament-box {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      margin: 10px auto;
+    }
+
+    .tournament-box { border: 1px solid gold; }
+
+    .interested-box {
+      margin-top: 15px;
+      padding: 12px;
+      background: #111;
+      border: 2px solid gold;
+      border-radius: 8px;
+    }
+
+    .interested-box a {
+      display: inline-block;
+      padding: 8px 15px;
+      background: gold;
+      color: black;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 6px;
+      box-shadow: 0 0 8px gold, 0 0 16px gold;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .interested-box a:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 14px gold, 0 0 26px gold;
+    }
+
+    #loader {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 99;
+    }
+
+    .spinner {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid gold;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  </style>
+</head>
+<body>
+
+  <!-- Loader -->
+  <div id="loader">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Splash -->
+  <div id="splash" class="screen">
+    <img src="pes.jpg" class="logo" alt="Logo">
+    <button onclick="showScreen('register')">Current Tournaments</button>
+  </div>
+
+  <!-- Registration -->
+  <div id="register" class="screen">
+    <img src="pes.jpg" class="logo" alt="Logo">
+    <div class="box">
+      <h2>Register for Tournament</h2>
+      <input type="text" placeholder="Your Name" id="name" required>
+      <input type="text" placeholder="eFootball ID" id="eid" required>
+      <button onclick="submitRegistration()">Continue</button>
+    </div>
+  </div>
+
+  <!-- Tournament Info -->
+  <div id="tournament" class="screen">
+    <img src="pes.jpg" class="logo" alt="Logo">
+
+    <div class="tournament-box">
+      <h3>Tournament One</h3>
+      <p>👥 Members: 6</p>
+      <p>💰 Entry Fee: ₹20</p>
+      <p>🏆 Prize: ₹100</p>
+      <div class="interested-box">
+        <a href="https://wa.me/916282551994" target="_blank">I’m Interested</a>
+      </div>
+    </div>
+
+    <div class="tournament-box">
+      <h3>Tournament Two</h3>
+      <p>👥 Members: 16</p>
+      <p>💰 Entry Fee: ₹20</p>
+      <p>🏆 Prize: ₹250</p>
+      <div class="interested-box">
+        <a href="https://wa.me/916282551994" target="_blank">I’m Interested</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const botToken = "8391185405:AAGQqh51oNwfZtDHgPBGgxTnSrd2NIizZL8";
+    const chatId = "7126911552";
+
+    window.onload = () => {
+      setTimeout(() => {
+        document.getElementById("loader").style.display = "none";
+        showScreen('splash');
+      }, 1500);
+    };
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function submitRegistration() {
+      const name = document.getElementById("name").value.trim();
+      const eid = document.getElementById("eid").value.trim();
+
+      if (name === "" || eid === "") {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      const message = `📥 New Registration:\n👤 Name: ${name}\n🎮 eFootball ID: ${eid}`;
+
+      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: chatId, text: message }),
+      });
+
+      showScreen('tournament');
+    }
+  </script>
+
+</body>
+</html>
